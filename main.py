@@ -19,7 +19,7 @@ class VideoModel(db.Model):
         return f"Video(name={name}, views={views}, likes={likes})"
 
 
-# db.create_all() --This should be run only once at the start of the app, commented out because if ran each time, db will reinitialize each time. 
+# db.create_all() --This should be run only once at the start of the app, commented out because if ran each time, db will reinitialize each time.
 
 video_put_args = reqparse.RequestParser()
 video_put_args.add_argument("name", type=str, help="Name of the video is required", required=True)
@@ -44,7 +44,20 @@ resource_fields = {
 }
 
 
+class Videos(Resource):
+    @marshal_with(resource_fields)
+    def get(self):
+        try:
+            result = VideoModel.query.all()
+            if not result:
+                result = abort(404, "There is no videos here.....")
+            return result
+        except ValueError:
+            pass
+
+
 class Video(Resource):
+
     @marshal_with(resource_fields)
     def get(self, video_id):
         try:
@@ -109,6 +122,8 @@ class Video(Resource):
 
 
 api.add_resource(Video, "/video/<int:video_id>")
+api.add_resource(Videos, "/videos")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
