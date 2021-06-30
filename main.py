@@ -19,7 +19,7 @@ class VideoModel(db.Model):
         return f"Video(name={name}, views={views}, likes={likes})"
 
 
-# db.create_all()
+# db.create_all() --This should be run only once at the start of the app, commented out because if ran each time, db will reinitialize each time. 
 
 video_put_args = reqparse.RequestParser()
 video_put_args.add_argument("name", type=str, help="Name of the video is required", required=True)
@@ -47,7 +47,6 @@ resource_fields = {
 class Video(Resource):
     @marshal_with(resource_fields)
     def get(self, video_id):
-
         try:
             result = VideoModel.query.filter_by(id=video_id).first()
             if not result:
